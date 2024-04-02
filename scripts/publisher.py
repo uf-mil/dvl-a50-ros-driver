@@ -33,7 +33,7 @@ def getData():
 
 	while not '\n' in raw_data:
 		try:
-			rec = s.recv(1) # Add timeout for that
+			rec = s.recv(1).decode() # Add timeout for that
 			if len(rec) == 0:
 				rospy.logerr("Socket closed by the DVL, reopening")
 				connect()
@@ -124,11 +124,11 @@ def publisher():
 if __name__ == '__main__':
 	global s, TCP_IP, TCP_PORT, do_log_raw_data
 	rospy.init_node('a50_pub', anonymous=False)
-	TCP_IP = rospy.get_param("~ip", "10.42.0.186")
+	TCP_IP = rospy.get_param("~ip", "192.168.37.95")
 	TCP_PORT = rospy.get_param("~port", 16171)
 	do_log_raw_data = rospy.get_param("~do_log_raw_data", False)
 	connect()
 	try:
 		publisher()
-	except rospy.ROSInterruptException:
+	except (rospy.ROSInterruptException, StopIteration):
 		s.close()
